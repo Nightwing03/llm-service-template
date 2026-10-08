@@ -1,4 +1,3 @@
-
 """Exception taxonomy for LLM provider calls.
  
 Each exception type maps to exactly one client behaviour. If two types would
@@ -67,3 +66,21 @@ class InvalidRequestError(LLMServiceError):
     fallback -- every provider would fail identically, and walking the chain
     only makes the same failure slower.
     """
+ 
+ 
+class AllProvidersFailedError(LLMServiceError):
+    """Every provider in the chain was tried and none served the request.
+ 
+    Client behaviour: none -- this is what the client raises, not what it
+    catches. It is the fifth type despite the "one behaviour each" rule
+    because it describes the *chain*, not a provider: the caller's only
+    remaining option is to surface the failure.
+ 
+    ``errors`` maps provider name to the last exception that provider raised,
+    so a caller can see whether the chain died of rate limits, bad
+    credentials, or a genuine outage.
+    """
+ 
+    def __init__(self, message: str = "", errors: dict[str, Exception] | None = None) -> None:
+        super().__init__(message)
+        self.errors = errors or {}
