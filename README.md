@@ -18,7 +18,7 @@ class Verdict(BaseModel):
     confidence: float
 
 client = LLMClient(
-    [GroqProvider(model="llama-3.1-8b-instant"), OllamaProvider(model="qwen2.5")],
+    [GroqProvider(model="openai/gpt-oss-20b"), OllamaProvider(model="qwen2.5")],
     requests_per_minute={"groq": 25},
 )
 
